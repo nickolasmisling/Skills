@@ -22,3 +22,14 @@ Each skill lives in its own top-level directory named after the skill, containin
 - Write the `description` precisely: it is the only signal Claude Code uses to decide when to auto-trigger (or, for manual-only skills, when to refuse to auto-trigger) the skill. State explicitly whether the skill is manual-only, and list exact invocation phrases if so.
 - Keep instructions in the body imperative and unambiguous — this text is injected directly into a future Claude Code session's context to steer its behavior, not documentation for a human reader.
 - No code to compile or tests to run — validate a new/edited skill by reading it back and checking the frontmatter is valid YAML and the description matches the intended triggering behavior described in this file.
+
+## Cross-surface skills
+
+Some skills (e.g. `frustration-recovery`) are meant to work in Claude Code, claude.ai chat, the desktop app, and Cowork. When editing one of these, keep it portable:
+
+- Frontmatter: only `name` and `description` (the open Agent Skills format also allows `license`, `compatibility`, `metadata`, and `allowed-tools`). Claude Code-only keys such as `disable-model-invocation`, `user-invocable`, or `context` make the claude.ai upload fail with "Unexpected key(s) in SKILL.md frontmatter".
+- `name`: lowercase letters, digits, and hyphens; at most 64 characters; must match the directory name; must not contain "claude" or "anthropic".
+- `description`: at most 1024 characters; no angle brackets (`<` or `>`); written in the third person ("Claude", not "you").
+- Body: don't assume Claude Code tools. Describe capabilities ("if you can edit files…", "if you have a memory tool…") and put surface-specific steps in clearly labeled branches. Don't use Claude Code-only syntax (`!` shell-injection lines, `$ARGUMENTS`, `${CLAUDE_*}` variables).
+
+`subagents-mode` is Claude Code-only by design (it depends on the Agent and Task tools).
